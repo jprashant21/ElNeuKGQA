@@ -1,7 +1,7 @@
 from typing import List, Dict, Set
 
 import re
-from query_tools import Resource
+from query_tools.resources import Resource
 
 
 def get_prefix(uri):

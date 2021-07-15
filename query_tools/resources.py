@@ -1,7 +1,7 @@
 import re
 from collections import OrderedDict
 
-from mapping.mapper.base_mapper import get_prefix
+#from mapping.mapper.base_mapper import get_prefix
 from query_tools.dbpedia_utils import DBPEDIA_PREFIXES
 from query_tools.wikidata_utils import WIKIDATA_PREFIXES
 
@@ -60,9 +60,20 @@ class Resource:
     def __hash__(self):
         return hash(self.get(compress=False))
 
+    def get_prefix(uri):
+        uri_pattern = re.compile("<?(http(?:s)?://(?:[^/]+/)+)([\w\d()]*)>?")
+        prefix_pattern = re.compile("(\w+):(\S+)")
+        if uri_pattern.match(uri):
+            s_uri = uri_pattern.match(uri)
+            return s_uri.group(1), s_uri.group(2)
+        if prefix_pattern.search(uri):
+            s_uri = prefix_pattern.match(uri)
+            return s_uri.group(1), s_uri.group(2)
+        raise TypeError("uri doesn't match")
+    
     @classmethod
     def create_resource(cls, resource_uri: str):
-        prefix, _ = get_prefix(resource_uri)
+        prefix, _ = self.get_prefix(resource_uri)
         for prefix, ResourceClass in RESOURCES_DICT.items():
             try:
                 return ResourceClass(resource_uri)
